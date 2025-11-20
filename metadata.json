@@ -1,0 +1,5 @@
+{
+  "name": "blockchain_visualizer",
+  "description": "A 3D galactic visualization of major blockchains as planets, showing real-time simulated transaction flows across the globe.",
+  "requestFramePermissions": []
+}
