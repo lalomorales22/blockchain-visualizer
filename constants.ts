@@ -14,87 +14,96 @@ export const PLANETS: PlanetData[] = [
     position: [0, 0, 0], // Center
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 7, avgFee: '$5.50', consensus: 'PoW' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 2.8 // Largest
   },
   {
     id: 'ethereum',
     name: 'Ethereum (ETH)',
     color: '#627EEA',
     description: 'The global computer.',
-    position: [-30, 5, -10], // Left 1
+    position: [-35, 5, -10], // Left 1
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 29, avgFee: '$2.10', consensus: 'PoS' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 2.2
   },
   {
     id: 'solana',
     name: 'Solana (SOL)',
     color: '#14F195',
     description: 'High-speed execution layer.',
-    position: [30, 5, -10], // Right 1
+    position: [35, 5, -10], // Right 1
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 4500, avgFee: '$0.00025', consensus: 'PoH' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 2.0
   },
   {
     id: 'bsc',
     name: 'BNB Chain (BSC)',
     color: '#F3BA2F',
     description: 'Binance Smart Chain.',
-    position: [-60, -5, 0], // Left 2
+    position: [-70, -5, 0], // Left 2
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 150, avgFee: '$0.10', consensus: 'PoSA' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 1.8
   },
   {
     id: 'polygon',
     name: 'Polygon (MATIC)',
     color: '#8247E5',
     description: 'Ethereum sidechain scaling.',
-    position: [60, -5, 0], // Right 2
+    position: [70, -5, 0], // Right 2
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 65, avgFee: '$0.01', consensus: 'PoS' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 1.6
   },
   {
     id: 'avalanche',
     name: 'Avalanche (AVAX)',
     color: '#E84142',
     description: 'High-throughput dApps.',
-    position: [-90, 10, 10], // Left 3
+    position: [-100, 10, 10], // Left 3
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 4500, avgFee: '$0.05', consensus: 'Snowman' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 1.5
   },
   {
     id: 'arbitrum',
     name: 'Arbitrum (ARB)',
     color: '#2D374B',
     description: 'L2 scaling solution.',
-    position: [90, 10, 10], // Right 3
+    position: [100, 10, 10], // Right 3
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 40, avgFee: '$0.05', consensus: 'L2' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 1.4
   },
   {
     id: 'optimism',
     name: 'Optimism (OP)',
     color: '#FF0420',
     description: 'Optimistic Rollup L2.',
-    position: [-120, -10, 20], // Left 4
+    position: [-130, -10, 20], // Left 4
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 25, avgFee: '$0.08', consensus: 'L2' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 1.4
   },
   {
     id: 'fantom',
     name: 'Fantom (FTM)',
     color: '#1969FF',
     description: 'DAG-based smart contracts.',
-    position: [120, -10, 20], // Right 4
+    position: [130, -10, 20], // Right 4
     textureUrl: EARTH_TEXTURE_URL,
     stats: { tps: 20, avgFee: '$0.01', consensus: 'Lachesis' },
-    entityType: 'planet'
+    entityType: 'planet',
+    size: 1.3
   },
   // NEW ENTITIES
   {
@@ -102,20 +111,22 @@ export const PLANETS: PlanetData[] = [
     name: 'Galactic Exchange (CEX/DEX)',
     color: '#00ffcc',
     description: 'Central Liquidity Hub',
-    position: [160, 5, 40], // Far Right
+    position: [180, 5, 40], // Far Right
     textureUrl: '',
     stats: { tps: 10000, avgFee: '0.1%', consensus: 'OrderBook' },
-    entityType: 'exchange'
+    entityType: 'exchange',
+    size: 1
   },
   {
     id: 'bridge',
     name: 'The Quantum Bridge',
     color: '#ffffff',
     description: 'Cross-Chain Interoperability Protocol',
-    position: [0, 35, -40], // High Center Back
+    position: [0, 45, -60], // High Center Back
     textureUrl: '',
     stats: { tps: 500, avgFee: '$10.00', consensus: 'Relayer' },
-    entityType: 'bridge'
+    entityType: 'bridge',
+    size: 1
   }
 ];
 

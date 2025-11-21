@@ -5,7 +5,7 @@ export interface PlanetData {
   name: string;
   color: string;
   description: string;
-  position: [number, number, number]; // x, y, z in space
+  position: [number, number, number]; // Initial position
   textureUrl: string; 
   stats: {
     tps: number;
@@ -13,6 +13,7 @@ export interface PlanetData {
     consensus: string;
   };
   entityType?: 'planet' | 'exchange' | 'bridge';
+  size?: number; // Scale multiplier
 }
 
 export interface Transaction {
@@ -33,6 +34,9 @@ export interface Transaction {
   
   timestamp: number;
   isWhale: boolean;
+  // User specific
+  isUserTransaction?: boolean;
+  userColor?: string;
 }
 
 export interface TransactionFilter {
@@ -59,3 +63,29 @@ export interface UserProfile {
 
 export type ViewMode = 'first' | 'third';
 export type TransactionStyle = 'lines' | 'particles' | 'bolts';
+
+// Wallet & DEX Types
+export interface WalletState {
+  isConnected: boolean;
+  address: string | null;
+  balanceUSDT: number;
+}
+
+export interface UserTransaction {
+  hash: string;
+  amount: number;
+  toPlanetId: string;
+  timestamp: number;
+  status: 'success';
+}
+
+export type PlanetBalanceMap = Record<string, number>;
+
+export type PlanetaryPositionMap = Record<string, [number, number, number]>;
+
+export interface InteractionTarget {
+  id: string;
+  type: 'planet' | 'exchange' | 'bridge';
+  name: string;
+  distance: number;
+}

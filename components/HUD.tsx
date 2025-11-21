@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlanetData, TransactionFilter, ChatMessage, UserProfile, ViewMode, TransactionStyle } from '../types';
+import { PlanetData, TransactionFilter, ChatMessage, UserProfile, ViewMode, TransactionStyle, WalletState, UserTransaction } from '../types';
 import { PLANETS } from '../constants';
 import { askGeminiAboutCrypto } from '../services/geminiService';
 
@@ -13,6 +13,10 @@ interface HUDProps {
   setViewMode: (m: ViewMode) => void;
   txStyle: TransactionStyle;
   setTxStyle: (s: TransactionStyle) => void;
+  wallet: WalletState;
+  userTransactions: UserTransaction[];
+  isEditMode: boolean;
+  setIsEditMode: (v: boolean) => void;
 }
 
 export const HUD: React.FC<HUDProps> = ({ 
@@ -24,7 +28,11 @@ export const HUD: React.FC<HUDProps> = ({
     viewMode,
     setViewMode,
     txStyle,
-    setTxStyle
+    setTxStyle,
+    wallet,
+    userTransactions,
+    isEditMode,
+    setIsEditMode
 }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
@@ -38,7 +46,6 @@ export const HUD: React.FC<HUDProps> = ({
     setChatHistory(prev => [...prev, { role: 'user', text: userMsg }]);
     setIsAiLoading(true);
 
-    // Context is general here since we aren't focused on one planet
     const contextPlanet = PLANETS.find(p => visiblePlanetIds.includes(p.id)) || PLANETS[0];
     const response = await askGeminiAboutCrypto(userMsg, contextPlanet);
     setChatHistory(prev => [...prev, { role: 'model', text: response }]);
@@ -61,6 +68,14 @@ export const HUD: React.FC<HUDProps> = ({
 
         {/* View & Visuals Toggles & Filters (Top Right) */}
         <div className="flex flex-col gap-2 items-end">
+            {/* Edit Galaxy Toggle */}
+            <button 
+                onClick={() => setIsEditMode(!isEditMode)}
+                className={`px-4 py-2 rounded-lg font-bold font-mono border transition-all ${isEditMode ? 'bg-yellow-600 border-yellow-400 text-white animate-pulse' : 'bg-gray-900/80 border-gray-600 text-gray-400 hover:bg-gray-800'}`}
+            >
+                {isEditMode ? '⚠ GALAXY BUILDER ACTIVE ⚠' : '🛠 EDIT GALAXY'}
+            </button>
+
             <div className="bg-black/60 border border-white/10 rounded-lg p-2 flex gap-2 backdrop-blur-md">
                 <button 
                     onClick={() => setViewMode('third')}
@@ -88,7 +103,6 @@ export const HUD: React.FC<HUDProps> = ({
                 ))}
             </div>
 
-            {/* Filter Controls Moved Here */}
             <div className="flex flex-col gap-2 bg-black/60 border border-white/10 p-4 rounded-xl backdrop-blur-md mt-1 w-64">
                 <label className="flex items-center gap-2 text-sm font-mono text-cyan-400 cursor-pointer hover:text-cyan-300 select-none">
                     <input 
@@ -145,18 +159,67 @@ export const HUD: React.FC<HUDProps> = ({
         })}
       </div>
 
-      {/* Bottom Controls & Info */}
+      {/* Galactic Wallet Widget (Right Sidebar) */}
+      <div className="absolute top-1/2 right-6 transform -translate-y-1/2 pointer-events-auto">
+         <div className="w-72 bg-black/80 border border-cyan-500/40 rounded-2xl overflow-hidden backdrop-blur-md shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+            <div className="p-4 border-b border-white/10 bg-gradient-to-r from-cyan-900/20 to-transparent">
+                <h3 className="text-cyan-400 font-bold font-mono tracking-widest flex items-center gap-2">
+                    <span className="text-xl">❖</span> GALACTIC WALLET
+                </h3>
+            </div>
+            <div className="p-4 space-y-4">
+                <div className="bg-gray-900/50 rounded-lg p-3 border border-white/5">
+                    <p className="text-xs text-gray-500 mb-1">STATUS</p>
+                    <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${wallet.isConnected ? 'bg-green-500 shadow-[0_0_8px_#0f0]' : 'bg-red-500'}`} />
+                        <span className="text-sm font-mono text-white">{wallet.isConnected ? 'CONNECTED' : 'OFFLINE'}</span>
+                    </div>
+                    {wallet.isConnected && <p className="text-xs font-mono text-gray-500 mt-1 truncate">{wallet.address}</p>}
+                </div>
+
+                <div className="bg-gray-900/50 rounded-lg p-3 border border-white/5">
+                    <p className="text-xs text-gray-500 mb-1">TOTAL BALANCE</p>
+                    <p className="text-2xl font-bold text-white">${wallet.balanceUSDT.toLocaleString()}</p>
+                </div>
+
+                <div className="max-h-40 overflow-y-auto">
+                    <p className="text-xs text-gray-500 mb-2 uppercase">Recent Activity</p>
+                    {userTransactions.length === 0 ? (
+                        <p className="text-xs text-gray-600 italic">No recent transmissions.</p>
+                    ) : (
+                        <div className="space-y-2">
+                            {userTransactions.map(tx => (
+                                <div key={tx.hash} className="bg-white/5 p-2 rounded flex justify-between items-center text-xs">
+                                    <div className="flex flex-col">
+                                        <span className="text-cyan-400 font-mono">SENT USDT</span>
+                                        <span className="text-gray-500 scale-75 origin-left">TO: {PLANETS.find(p=>p.id===tx.toPlanetId)?.name.split(' ')[0]}</span>
+                                    </div>
+                                    <span className="text-red-400 font-bold">-${tx.amount}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+         </div>
+      </div>
+
+      {/* Bottom Controls */}
       <div className="absolute bottom-0 w-full p-6 flex flex-col md:flex-row justify-between items-end bg-gradient-to-t from-black/90 to-transparent pointer-events-auto gap-4">
-        
-        {/* Controls Info (Left) */}
         <div className="hidden md:block text-gray-500 font-mono text-xs">
-            <p>[W][A][S][D] THRUSTERS</p>
-            <p>[SHIFT] BOOST</p>
-            <p>[MOUSE] LOOK</p>
-            <p>[CLICK] ENGAGE</p>
+            {isEditMode ? (
+                <p className="text-yellow-400 animate-pulse">DRAG PLANETS TO REARRANGE GALAXY</p>
+            ) : (
+                <>
+                    <p>[W][A][S][D] THRUSTERS</p>
+                    <p>[SHIFT] BOOST</p>
+                    <p>[MOUSE] LOOK (CLICK TO LOCK)</p>
+                    <p>[SCROLL] TIME WARP</p>
+                </>
+            )}
         </div>
 
-        {/* AI Chat Toggle */}
+        {/* AI Chat */}
         <div className="relative">
             {isChatOpen && (
                 <div className="absolute bottom-14 right-0 w-80 bg-black/90 border border-cyan-500/50 rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(0,255,255,0.2)]">
@@ -169,7 +232,6 @@ export const HUD: React.FC<HUDProps> = ({
                                 {msg.text}
                             </div>
                         ))}
-                        {isAiLoading && <div className="text-xs text-cyan-500 animate-pulse">Processing query...</div>}
                     </div>
                     <div className="p-3 border-t border-white/10 flex gap-2">
                         <input 
@@ -179,9 +241,7 @@ export const HUD: React.FC<HUDProps> = ({
                             onChange={(e) => setChatInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                         />
-                        <button onClick={handleSendMessage} className="text-cyan-400 hover:text-white">
-                            SEND
-                        </button>
+                        <button onClick={handleSendMessage} className="text-cyan-400 hover:text-white">SEND</button>
                     </div>
                 </div>
             )}
@@ -189,9 +249,7 @@ export const HUD: React.FC<HUDProps> = ({
                 onClick={() => setIsChatOpen(!isChatOpen)}
                 className="bg-cyan-600 hover:bg-cyan-500 text-white p-4 rounded-full shadow-lg transition-all hover:scale-105 active:scale-95"
             >
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                </svg>
+               <span className="text-2xl">💬</span>
             </button>
         </div>
       </div>
